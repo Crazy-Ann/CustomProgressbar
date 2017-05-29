@@ -1,6 +1,8 @@
 package com.yjt.demo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +13,26 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, CustomProgressBarListener {
 
     private CustomProgressBar customProgressBar;
     private int               progress;
     private MainHandler       handler;
+
+    @Override
+    public Bitmap setOnDefaultImage() {
+        return BitmapFactory.decodeResource(getResources(), R.mipmap.backgound);
+    }
+
+    @Override
+    public Bitmap setOnThumbImage() {
+        return BitmapFactory.decodeResource(getResources(), R.mipmap.thumb);
+    }
+
+    @Override
+    public Bitmap setOnResultImage() {
+        return BitmapFactory.decodeResource(getResources(), R.mipmap.right);
+    }
 
     private static class MainHandler extends Handler {
 
@@ -37,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             sendEmptyMessageDelayed(0, 300);
                         } else {
                             activity.customProgressBar.setState(103);
-                            activity.customProgressBar.setIndeterminateDrawable(activity.getDrawable(R.mipmap.ic_launcher_round));
                         }
                         break;
 
@@ -55,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         handler = new MainHandler(this);
         customProgressBar = (CustomProgressBar) findViewById(R.id.customProgressBar);
-        customProgressBar.setIndeterminate(false);
+        customProgressBar.setCustomProgressBarListener(this);
         customProgressBar.setState(101);
         customProgressBar.setOnClickListener(this);
     }
@@ -66,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.customProgressBar:
                 customProgressBar.setProgress(0);
-                customProgressBar.setProgress(progress);
                 customProgressBar.setState(102);
                 handler.sendEmptyMessageDelayed(0, 500);
                 break;

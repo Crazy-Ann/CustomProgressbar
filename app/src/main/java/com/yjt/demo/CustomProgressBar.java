@@ -16,15 +16,17 @@ import android.widget.ProgressBar;
 
 public class CustomProgressBar extends ProgressBar {
 
-    private Context            context;
-    private Paint              paint;
-    private int                progress;
-    private int                state;
-    private int                thumb;
+    private Context context;
+    private Paint   paint;
+    private int     progress;
+    private int     state;
+    private int     thumb;
 
     private static final int STATE_DEFAULT     = 101;
     private static final int STATE_DOWNLOADING = 102;
     private static final int STATE_DOWNLOADED  = 103;
+
+    private CustomProgressBarListener customProgressBarListener;
 
 
     public CustomProgressBar(Context context) {
@@ -70,9 +72,14 @@ public class CustomProgressBar extends ProgressBar {
 //                Rect rect1 = new Rect();
 //                paint.getTextBounds(text1, 0, text1.length(), rect1);
 //                canvas.drawText(text1, (getWidth() / 2) - rect1.centerX(), (getHeight() / 2) - rect1.centerY(), paint);
-                Bitmap icon  = BitmapFactory.decodeResource(getResources(), R.mipmap.backgound);
-                float  iconX = (getWidth() / 2) - icon.getWidth() / 2;
-                float  iconY = (getHeight() / 2) - icon.getHeight() / 2;
+                Bitmap icon = null;
+                if (customProgressBarListener != null) {
+                    icon = customProgressBarListener.setOnDefaultImage();
+                } else {
+                    //default image
+                }
+                float iconX = (getWidth() / 2) - icon.getWidth() / 2;
+                float iconY = (getHeight() / 2) - icon.getHeight() / 2;
                 canvas.drawBitmap(icon, iconX, iconY, paint);
                 if (!icon.isRecycled()) {
                     icon.isRecycled();
@@ -93,19 +100,29 @@ public class CustomProgressBar extends ProgressBar {
 //                Rect rect3 = new Rect();
 //                paint.getTextBounds(text3, 0, text3.length(), rect3);
 //                canvas.drawText(text3, (getWidth() / 2) - rect3.centerX(), (getHeight() / 2) - rect3.centerY(), paint);
-                Bitmap icon1  = BitmapFactory.decodeResource(getResources(), R.mipmap.thumb);
-                float  icon1X = (getWidth() / 2) - icon1.getWidth() / 2;
-                float  icon1Y = (getHeight() / 2) - icon1.getHeight() / 2;
-                canvas.drawBitmap(icon1, icon1X, icon1Y, paint);
-                if (!icon1.isRecycled()) {
-                    icon1.isRecycled();
+                Bitmap icon2 = null;
+                if (customProgressBarListener != null) {
+                    icon2 = customProgressBarListener.setOnThumbImage();
+                } else {
+                    //default image
                 }
-                Bitmap icon2  = BitmapFactory.decodeResource(getResources(), R.mipmap.right);
-                float  icon2X = (getWidth() / 2) - icon2.getWidth() / 2;
-                float  icon2Y = (getHeight() / 2) - icon2.getHeight() / 2;
+                float icon2X = (getWidth() / 2) - icon2.getWidth() / 2;
+                float icon2Y = (getHeight() / 2) - icon2.getHeight() / 2;
                 canvas.drawBitmap(icon2, icon2X, icon2Y, paint);
                 if (!icon2.isRecycled()) {
                     icon2.isRecycled();
+                }
+                Bitmap icon3 = null;
+                if (customProgressBarListener != null) {
+                    icon3 = customProgressBarListener.setOnResultImage();
+                } else {
+                    //default image
+                }
+                float icon3X = (getWidth() / 2) - icon3.getWidth() / 2;
+                float icon3Y = (getHeight() / 2) - icon3.getHeight() / 2;
+                canvas.drawBitmap(icon3, icon3X, icon3Y, paint);
+                if (!icon3.isRecycled()) {
+                    icon3.isRecycled();
                 }
 
                 break;
@@ -115,9 +132,8 @@ public class CustomProgressBar extends ProgressBar {
         }
     }
 
-    public int dip2px(Context context, float dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+    public void setCustomProgressBarListener(CustomProgressBarListener customProgressBarListener) {
+        this.customProgressBarListener = customProgressBarListener;
     }
 
     public int sp2px(Context context, float spValue) {
